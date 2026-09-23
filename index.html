@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mercado — Retail Real Estate Investment &amp; Advisory</title>
+<meta name="description" content="Mercado is an integrated retail real estate investment and advisory platform creating value across streets and neighborhoods throughout the country.">
+<meta property="og:title" content="Mercado">
+<meta property="og:description" content="An integrated retail real estate investment and advisory platform. We shape the ground plane of communities.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MERCADO — design tokens
+   Palette sampled directly from the supplied storefront photography:
+   painted shopfront timber, poured concrete sidewalk, awning ochre.
+   ============================================================ */
+:root{
+  --ink:#21231E;          /* painted shopfront — primary surface */
+  --ink-2:#2A2C25;        /* raised surface on dark */
+  --ink-3:#171814;        /* recessed */
+  --stone:#E3E1DA;        /* concrete sidewalk — light surface */
+  --stone-2:#CFCCC3;      /* deeper concrete */
+  --chalk:#EFEEE9;        /* type on dark */
+  --signal:#C9A227;       /* awning ochre — graphic marker only, never body text */
+
+  --fg:var(--chalk);
+  --bg:var(--ink);
+  --rule:rgba(239,238,233,.16);
+
+  --sans:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --serif:'Newsreader','Iowan Old Style','Times New Roman',Times,serif;
+
+  /* modular scale — perfect fourth (1.333) */
+  --t--1:clamp(.68rem,.64rem + .18vw,.78rem);
+  --t-0:clamp(.86rem,.8rem + .26vw,1rem);
+  --t-1:clamp(1.05rem,.94rem + .5vw,1.3rem);
+  --t-2:clamp(1.3rem,1.06rem + 1.05vw,2rem);
+  --t-3:clamp(1.7rem,1.2rem + 2.2vw,3.1rem);
+  --t-4:clamp(2.3rem,1.2rem + 4.8vw,5.2rem);
+  --t-5:clamp(3rem,.8rem + 9.6vw,9rem);
+
+  --pad:clamp(1.15rem,4.4vw,4.5rem);
+  --frame:clamp(.5rem,1.1vw,1.1rem);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-io:cubic-bezier(.65,.02,.2,1);
+}
+/* the viewer's own light/dark chrome must not repaint a branded site */
+:root:not([data-theme="light"]),:root[data-theme="dark"]{color-scheme:only light}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--serif);font-size:var(--t-0);line-height:1.62;
+  font-optical-sizing:auto;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background-color .9s var(--ease),color .9s var(--ease);
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--signal);color:var(--ink)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+
+/* ---------- type roles ----------
+   Archivo = signage. Every storefront in the reference photography carries
+   letterspaced grotesk capitals; the display voice is borrowed from them.
+   Newsreader = the editorial voice, for anything read rather than seen.     */
+.sign{
+  font-family:var(--sans);font-weight:600;text-transform:uppercase;
+  line-height:.86;letter-spacing:.02em;font-stretch:112%;
+  margin:0;text-wrap:balance;
+}
+.sign--xl{font-size:var(--t-5);letter-spacing:-.005em;font-weight:700}
+.sign--lg{font-size:clamp(2.3rem,4vw,3.8rem)}
+.sign--md{font-size:var(--t-3);line-height:.95}
+.lede{font-size:var(--t-2);line-height:1.34;font-weight:300;letter-spacing:-.012em;margin:0;text-wrap:pretty}
+.prose{max-width:34ch;font-size:var(--t-1);line-height:1.58;font-weight:300;margin:0}
+.prose--wide{max-width:46ch}
+.note{font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.09em;text-transform:uppercase;opacity:.55;margin:0}
+.num{font-family:var(--sans);font-weight:200;font-stretch:88%;letter-spacing:-.03em}
+
+/* ---------- inset frame (the "white border" consideration) ---------- */
+.edge{position:fixed;inset:var(--frame);border:1px solid var(--rule);pointer-events:none;z-index:60;transition:border-color .9s var(--ease)}
+@media (max-width:700px){.edge{display:none}}
+
+/* ---------- cursor dot ---------- */
+.dot{position:fixed;top:0;left:0;width:7px;height:7px;border-radius:50%;background:var(--signal);pointer-events:none;z-index:200;opacity:0;box-shadow:0 0 0 1px rgba(0,0,0,.18);transition:opacity .4s,transform .18s var(--ease)}
+.dot.on{opacity:1}
+.dot.grow{transform:scale(4.2)}
+@media (pointer:coarse){.dot{display:none}}
+
+/* ---------- header ---------- */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:80;padding:calc(var(--frame) + .85rem) calc(var(--frame) + var(--pad));
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;
+  color:var(--fg);transition:color .9s var(--ease)}
+.hdr__slot{font-family:var(--sans);font-weight:700;font-size:clamp(.82rem,1.5vw,1.05rem);text-transform:uppercase;letter-spacing:.26em;line-height:1;justify-self:start}
+.hdr__slot span{opacity:0;visibility:hidden}
+.hdr__slot.solo span{opacity:1;visibility:visible}
+.nav{display:flex;gap:clamp(1rem,2.6vw,2.4rem);justify-self:center;font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.nav a{position:relative;padding:.35rem 0;opacity:.62;transition:opacity .3s}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--signal);transform:scaleX(0);transform-origin:0 50%;transition:transform .45s var(--ease)}
+.nav a:hover,.nav a[aria-current="page"]{opacity:1}
+.nav a[aria-current="page"]::after,.nav a:hover::after{transform:scaleX(1)}
+.social{display:flex;gap:1.1rem;justify-self:end;font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.social a{opacity:.62;transition:opacity .3s}
+.social a:hover{opacity:1}
+.burger{display:none;justify-self:end;font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  padding:.7rem 0 .7rem 1rem;margin:-.7rem 0;min-height:44px}
+@media (max-width:860px){
+  .nav,.social{display:none}
+  .burger{display:block}
+  .hdr{grid-template-columns:1fr auto}
+}
+
+/* ---------- mobile menu — a designed panel, not a plugin drawer ---------- */
+.sheet{position:fixed;inset:0;z-index:90;background:var(--ink);color:var(--chalk);
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 4.6rem) calc(var(--frame) + var(--pad)) calc(env(safe-area-inset-bottom,0px) + 2rem);
+  clip-path:inset(0 0 100% 0);transition:clip-path .68s var(--ease-io);visibility:hidden;overscroll-behavior:contain}
+.sheet.open{clip-path:inset(0 0 0 0);visibility:visible}
+.sheet:focus{outline:none}
+.sheet__brand{font-family:var(--sans);font-weight:700;text-transform:uppercase;font-size:clamp(.82rem,1.5vw,1.05rem);
+  letter-spacing:.26em;line-height:1;position:absolute;top:calc(var(--frame) + .85rem);left:calc(var(--frame) + var(--pad));opacity:.9}
+.sheet nav{margin-block:auto}
+.sheet nav a{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  min-height:56px;padding:.5rem 0;font-family:var(--sans);font-weight:600;text-transform:uppercase;
+  font-size:clamp(1.5rem,8.2vw,2.3rem);line-height:1;letter-spacing:.01em;font-stretch:108%;
+  border-bottom:1px solid var(--rule);opacity:0;transform:translateY(.5rem);
+  transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.sheet.open nav a{opacity:1;transform:none}
+.sheet.open nav a:nth-child(1){transition-delay:.16s}
+.sheet.open nav a:nth-child(2){transition-delay:.23s}
+.sheet.open nav a:nth-child(3){transition-delay:.30s}
+.sheet.open nav a:nth-child(4){transition-delay:.37s}
+.sheet nav a::after{content:"";width:.9rem;height:2px;background:var(--signal);opacity:0;transition:opacity .4s}
+.sheet nav a[aria-current="page"]::after{opacity:1}
+.sheet nav a[aria-current="page"]{opacity:1}
+.sheet__close{position:absolute;top:calc(var(--frame) + .85rem);right:calc(var(--frame) + var(--pad));font-family:var(--sans);font-size:var(--t--1);
+  letter-spacing:.14em;text-transform:uppercase;font-weight:500;padding:.7rem 0 .7rem 1rem;margin:-.7rem 0;min-height:44px}
+.sheet__foot{display:flex;flex-wrap:wrap;gap:.2rem 1.6rem;border-top:1px solid var(--rule);padding-top:1.3rem}
+.sheet__foot a{font-family:var(--sans);font-size:var(--t--1);letter-spacing:.14em;text-transform:uppercase;font-weight:500;
+  opacity:.62;min-height:44px;display:flex;align-items:center}
+body.locked{overflow:hidden}
+
+/* ---------- layout ---------- */
+.page{display:none}
+.page.live{display:block}
+main{min-height:100vh}
+section{position:relative}
+.wrap{padding-inline:calc(var(--frame) + var(--pad))}
+.tone-stone{background:var(--stone);color:var(--ink)}
+.tone-ink{background:var(--ink);color:var(--chalk)}
+.tone-stone .note{opacity:.6}
+.pad-y{padding-block:clamp(5rem,13vh,10rem)}
+.pad-y-lg{padding-block:clamp(7rem,20vh,15rem)}
+.rule{height:1px;background:currentColor;opacity:.16;border:0;margin:0}
+
+/* ---------- scroll reveal ---------- */
+.rv{opacity:0;transform:translateY(1.1rem);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv-line{display:block;overflow:hidden}
+.rv-line>span{display:block;transform:translateY(105%);transition:transform 1.05s var(--ease-io)}
+.rv-line.in>span{transform:none}
+.rv-d1{transition-delay:.09s}.rv-d2{transition-delay:.18s}.rv-d3{transition-delay:.27s}
+.rv-d4{transition-delay:.36s}.rv-d5{transition-delay:.45s}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+  .rv,.rv-line>span{opacity:1;transform:none}
+  .dot{display:none}
+}
+
+/* ============================================================
+   HOME — the street elevation
+   The hero is a measured elevation of shopfronts, the way an
+   architect draws a block. Mercado's subject is the ground plane,
+   so the site opens on it.
+   ============================================================ */
+.hero{height:100svh;min-height:34rem;position:relative;overflow:hidden;background:var(--ink-3)}
+.elev{position:absolute;inset:auto 0 0 0;height:86%;display:flex;gap:0;will-change:transform}
+.elev__run{display:flex;flex:none;animation:drift 96s linear infinite}
+.elev figure{flex:none;width:clamp(11rem,20vw,21rem);margin:0;position:relative;overflow:hidden;border-right:1px solid rgba(0,0,0,.35)}
+.elev img{width:100%;height:100%;object-fit:cover;object-position:center bottom;filter:saturate(.82) contrast(1.04) brightness(.82)}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-100%,0,0)}}
+.hero__veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(23,24,20,.96) 0%,rgba(23,24,20,.78) 14%,rgba(23,24,20,.3) 40%,rgba(23,24,20,.16) 60%,rgba(23,24,20,.88) 100%)}
+.hero__datum{position:absolute;left:0;right:0;bottom:22%;height:1px;background:var(--signal);opacity:.5}
+.hero__foot{position:absolute;will-change:opacity;left:calc(var(--frame) + var(--pad));right:calc(var(--frame) + var(--pad));bottom:calc(var(--frame) + 1.6rem);
+  display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;color:var(--chalk)}
+.hero__stmt{font-family:var(--serif);font-size:var(--t-1);font-weight:300;line-height:1.4;max-width:28ch;margin:0}
+.hero__scroll{font-family:var(--sans);font-size:var(--t--1);letter-spacing:.14em;text-transform:uppercase;opacity:.5;white-space:nowrap}
+@media (max-width:700px){.hero__foot{flex-direction:column;align-items:flex-start;gap:1rem}.hero__scroll{display:none}}
+
+/* the wordmark that becomes the header identity */
+.mark{position:fixed;z-index:85;font-family:var(--sans);font-weight:700;text-transform:uppercase;
+  font-size:clamp(2.6rem,13.2vw,12rem);line-height:1;letter-spacing:.26em;
+  color:var(--chalk);transform-origin:0 0;white-space:nowrap;pointer-events:none;
+  left:calc(var(--frame) + var(--pad));top:38vh;will-change:transform}
+.mark[hidden]{display:none}
+
+/* ---------- about ---------- */
+.about{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1.5rem clamp(1rem,3vw,2.6rem)}
+.about__eyebrow{grid-column:1/3;align-self:start}
+.about__body{grid-column:3/9}
+.about__coda{grid-column:3/12;margin-top:clamp(2.6rem,7vh,5rem)}
+.about__coda p{font-family:var(--serif);font-style:italic;font-weight:300;font-size:var(--t-3);line-height:1.18;letter-spacing:-.018em;margin:0;max-width:22ch}
+@media (max-width:900px){
+  .about__eyebrow{grid-column:1/-1}.about__body{grid-column:1/-1}.about__coda{grid-column:1/-1}
+}
+
+/* ---------- three chapters ---------- */
+.chapter{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:center;gap:clamp(1.6rem,4vw,3.4rem);
+  padding-block:clamp(4rem,11vh,8.5rem);border-top:1px solid currentColor}
+.chapter{border-color:rgba(239,238,233,.14)}
+.chapter__fig{grid-column:1/6;margin:0;position:relative;overflow:hidden;aspect-ratio:4/5}
+.chapter:nth-of-type(even) .chapter__fig{grid-column:8/13;order:2}
+.chapter__fig img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 1.6s var(--ease);filter:saturate(.85)}
+.chapter:hover .chapter__fig img{transform:scale(1)}
+.chapter__body{grid-column:7/13}
+.chapter:nth-of-type(even) .chapter__body{grid-column:1/7;order:1}
+/* the headline is the link — no button, no "enter" CTA */
+.chapter__link{display:block;padding:.35rem 0 1.2rem}
+.chapter__body .sign--lg{display:inline-block;position:relative;margin:.75rem 0 0}
+.chapter__body .sign--lg>span{display:inline-block;transition:transform .65s var(--ease)}
+.chapter__body .sign--lg::after{content:"";position:absolute;left:0;right:0;bottom:-.1em;height:2px;background:var(--signal);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .75s var(--ease)}
+.chapter__link:hover .sign--lg>span,.chapter__link:focus-visible .sign--lg>span{transform:translateX(.045em)}
+.chapter__link:hover .sign--lg::after,.chapter__link:focus-visible .sign--lg::after{transform:scaleX(1)}
+.chapter__desc{max-width:30ch;font-weight:300;font-size:var(--t-1);line-height:1.5;margin:1.15rem 0 0;transition:opacity .5s var(--ease)}
+.chapter__link:hover .chapter__desc{opacity:.68}
+.chapter__link .note{transition:opacity .5s var(--ease)}
+.chapter__link:hover .note{opacity:.85}
+.chapter:has(.chapter__link:focus-visible) .chapter__fig img{transform:scale(1)}
+.more{display:inline-block;font-family:var(--sans);font-size:var(--t--1);letter-spacing:.14em;text-transform:uppercase;font-weight:500;
+  padding-bottom:.4rem;border-bottom:1px solid currentColor;transition:border-color .4s,opacity .3s}
+.more:hover{border-color:var(--signal)}
+
+/* ---------- rotating brand language (one cell, Mission's animation system) ---------- */
+.lexicon{padding-block:clamp(2.6rem,7vh,4.4rem) clamp(3.4rem,9vh,6rem)}
+.lexicon__rule{background:var(--signal);opacity:1;height:2px}
+.lexicon__word{font-family:var(--sans);font-weight:600;text-transform:uppercase;
+  font-size:clamp(1.55rem,6.2vw,3.4rem);line-height:1;letter-spacing:.055em;font-stretch:106%;
+  margin:clamp(1.1rem,3vh,1.9rem) 0 0}
+.rot--lex{min-height:1em}
+@media (max-width:860px){
+  .chapter__fig,.chapter:nth-of-type(even) .chapter__fig{grid-column:1/-1;order:1;aspect-ratio:3/2}
+  .chapter__body,.chapter:nth-of-type(even) .chapter__body{grid-column:1/-1;order:2}
+}
+
+/* ---------- mission (rotating heading) ---------- */
+.mission{text-align:left;overflow:hidden}
+.mission__frame{font-family:var(--serif);font-weight:200;font-size:var(--t-4);line-height:1.06;letter-spacing:-.028em;display:block;max-width:18ch}
+.rot{display:inline-grid;vertical-align:baseline}
+.rot>i{grid-area:1/1;font-style:normal;opacity:0;transform:translateY(.42em);transition:opacity .7s var(--ease),transform .7s var(--ease);white-space:nowrap}
+.rot>i.on{opacity:1;transform:none}
+.rot>i.out{opacity:0;transform:translateY(-.42em)}
+.mission em{font-style:italic;color:var(--signal)}
+
+/* ============================================================
+   ADVISORY
+   ============================================================ */
+.intro{height:82svh;min-height:26rem;display:flex;align-items:flex-end;position:relative;overflow:hidden;background:var(--ink-3)}
+.intro__bg{position:absolute;inset:0}
+.intro__bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:saturate(.7) contrast(1.05) brightness(.6);
+  animation:slowpan 27s var(--ease) infinite;transform-origin:center}
+.intro__bg img:nth-child(1){animation-delay:0s}
+.intro__bg img:nth-child(2){animation-delay:9s}
+.intro__bg img:nth-child(3){animation-delay:18s}
+@keyframes slowpan{
+  0%{opacity:0;transform:scale(1.02)}
+  6%{opacity:1}
+  30%{opacity:1}
+  38%{opacity:0}
+  100%{opacity:0;transform:scale(1.13)}
+}
+.intro__veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(23,24,20,.75),rgba(23,24,20,.2) 46%,rgba(23,24,20,.9))}
+.intro__inner{position:relative;width:100%;padding-bottom:clamp(2.6rem,7vh,5rem)}
+.intro h1{color:var(--chalk)}
+.intro__meta{display:flex;justify-content:space-between;align-items:baseline;gap:2rem;margin-top:1.4rem;color:var(--chalk)}
+
+/* sticky-scroll capability progression */
+.prog{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(1.6rem,4vw,3rem);align-items:start}
+.prog__rail{grid-column:1/4;position:sticky;top:26vh;align-self:start}
+.prog__rail ol{list-style:none;margin:0;padding:0}
+.prog__rail li{font-family:var(--sans);font-size:var(--t-0);font-weight:600;text-transform:uppercase;letter-spacing:.12em;
+  padding:.5rem 0 .5rem 1.4rem;position:relative;opacity:.3;transition:opacity .5s var(--ease)}
+.prog__rail li::before{content:"";position:absolute;left:0;top:1.1em;width:.55rem;height:1px;background:currentColor;transition:width .5s var(--ease),background-color .5s}
+.prog__rail li.on{opacity:1}
+.prog__rail li.on::before{width:.95rem;background:var(--signal)}
+.prog__steps{grid-column:5/13}
+.step{min-height:74vh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(2rem,6vh,4rem);border-top:1px solid rgba(33,35,30,.14)}
+.step:first-child{border-top:0}
+.step h3{font-family:var(--sans);font-weight:600;text-transform:uppercase;font-size:var(--t-2);letter-spacing:.015em;font-stretch:112%;line-height:1;margin:0 0 1rem}
+.step p{max-width:38ch;font-size:var(--t-1);font-weight:300;line-height:1.5;margin:0 0 1.8rem}
+.step figure{margin:0}
+.step__fig--full{width:100%}
+.step__fig--right{width:min(19rem,58%);margin-left:auto}
+.step__fig--mid{width:min(34rem,85%)}
+.plate{width:100%;max-height:78vh;object-fit:cover;object-position:center 62%}
+@media (max-width:900px){
+  .prog__rail{display:none}.prog__steps{grid-column:1/-1}
+  .step{min-height:0;padding-block:3rem}
+}
+
+/* ---------- CTA band ---------- */
+.cta{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:2rem}
+.cta h2{max-width:16ch}
+.btns{display:flex;flex-wrap:wrap;gap:.9rem}
+.btn{display:inline-block;font-family:var(--sans);font-size:var(--t-0);font-weight:600;text-transform:uppercase;letter-spacing:.11em;
+  padding:1.05rem 1.9rem;border:1px solid currentColor;transition:background-color .45s var(--ease),color .45s var(--ease)}
+.btn:hover{background:var(--signal);border-color:var(--signal);color:var(--ink)}
+
+/* ---------- projects ---------- */
+.projects{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(2rem,5vw,4rem)}
+.project{grid-column:span 6;display:block;position:relative}
+.project figure{margin:0 0 1.2rem}
+.project h3{font-family:var(--sans);font-weight:600;text-transform:uppercase;font-size:var(--t-2);letter-spacing:.01em;font-stretch:112%;line-height:1;margin:0 0 .5rem}
+.project p{max-width:34ch;font-weight:300;margin:0 0 .9rem}
+.project .more{opacity:.7}
+.project:hover .more{opacity:1;border-color:var(--signal)}
+@media (max-width:820px){.project{grid-column:1/-1}}
+
+/* ============================================================
+   INVESTMENTS
+   ============================================================ */
+.marquee{overflow:hidden;position:relative;padding-block:clamp(1rem,3vh,2rem)}
+.marquee__run{display:flex;width:max-content;animation:slide 34s linear infinite}
+.marquee span{font-family:var(--sans);font-weight:700;text-transform:uppercase;font-size:var(--t-5);line-height:.9;letter-spacing:.005em;
+  padding-right:.32em;font-stretch:118%;white-space:nowrap}
+.marquee span:nth-child(even){-webkit-text-stroke:1px currentColor;color:transparent}
+@keyframes slide{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+
+/* criteria — progressive disclosure, built as a specification sheet */
+.crit{border-top:1px solid rgba(33,35,30,.18)}
+.crit__row{border-bottom:1px solid rgba(33,35,30,.18);position:relative}
+.crit__head{width:100%;text-align:left;display:grid;grid-template-columns:3.2rem 1fr auto 1.7rem;align-items:baseline;gap:1.2rem;
+  padding:clamp(1.1rem,2.6vh,1.9rem) 0}
+.crit__no{font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.1em;opacity:.45}
+.crit__name{font-family:var(--sans);font-weight:600;text-transform:uppercase;font-size:var(--t-3);letter-spacing:.005em;font-stretch:112%;line-height:1;
+  transition:opacity .4s}
+.crit__hint{font-family:var(--serif);font-style:italic;font-weight:300;font-size:var(--t-0);opacity:.6;text-align:right}
+.crit__row.open .crit__name{opacity:1}
+.crit__tog{font-family:var(--sans);font-weight:400;font-size:var(--t-1);line-height:1;justify-self:end;opacity:.4;transition:opacity .35s,transform .45s var(--ease)}
+.crit__head:hover .crit__tog{opacity:.9}
+.crit__row.open .crit__tog{opacity:.9;transform:rotate(45deg)}
+.crit__head:hover .crit__name{opacity:.72}
+.crit__panel{overflow:hidden;height:0;transition:height .65s var(--ease-io)}
+.crit__inner{padding:0 0 clamp(1.6rem,4vh,2.8rem) 4.4rem;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1.4rem}
+.crit__text{grid-column:1/7}
+.crit__text p{margin:0;font-size:var(--t-1);font-weight:300;line-height:1.5;max-width:40ch}
+.crit__data{grid-column:8/13}
+.crit__data dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.2rem;font-family:var(--sans);font-size:var(--t-0)}
+.crit__data dt{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:var(--t--1);opacity:.5;align-self:center}
+.crit__data dd{margin:0;font-weight:400}
+.crit__big{font-family:var(--sans);font-weight:200;font-stretch:88%;letter-spacing:-.04em;font-size:var(--t-4);line-height:.9;margin:.2rem 0 0}
+@media (max-width:860px){
+  .crit__head{grid-template-columns:2.4rem 1fr 1.4rem}
+  .crit__hint{display:none}
+  .crit__inner{padding-left:2.4rem}
+  .crit__text,.crit__data{grid-column:1/-1}
+}
+
+/* experience */
+.exp{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(1.6rem,4vw,3rem)}
+.exp__item{grid-column:span 4}
+.exp__item h3{font-family:var(--sans);font-weight:600;text-transform:uppercase;font-size:var(--t-1);letter-spacing:.06em;margin:1rem 0 .35rem}
+.exp__item p{margin:0 0 .8rem;font-weight:300;font-size:var(--t-0);opacity:.78;max-width:30ch}
+@media (max-width:820px){.exp__item{grid-column:1/-1}}
+
+/* ============================================================
+   TENANTS
+   ============================================================ */
+.values{list-style:none;margin:0;padding:0;border-top:1px solid rgba(239,238,233,.16)}
+.values li{border-bottom:1px solid rgba(239,238,233,.16);padding:clamp(1rem,2.4vh,1.6rem) 0;
+  display:grid;grid-template-columns:2.6rem 1fr;gap:1.2rem;align-items:baseline}
+.values b{font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.1em;opacity:.45}
+.values span{font-family:var(--sans);font-weight:500;text-transform:uppercase;font-size:var(--t-2);letter-spacing:.005em;font-stretch:108%;line-height:1.08}
+/* three tiles as one editorial triptych — equal columns and a single
+   aspect ratio, so the rendered heights are identical by construction */
+.strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.7rem,1.8vw,1.4rem);align-items:start}
+.strip figure{margin:0}
+.strip img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.strip figure:nth-child(1) img{object-position:50% 50%}
+.strip figure:nth-child(2) img{object-position:48% 52%}
+.strip figure:nth-child(3) img{object-position:50% 52%}
+
+/* ---------- photography spec frame (asset not yet shot) ---------- */
+.spec{position:relative;display:flex;flex-direction:column;justify-content:space-between;
+  border:1px solid currentColor;padding:clamp(.9rem,2vw,1.4rem);min-height:9rem;
+  background:repeating-linear-gradient(-45deg,transparent 0 9px,rgba(127,127,127,.075) 9px 18px)}
+.spec--wide{aspect-ratio:16/7}
+.spec--land{aspect-ratio:3/2}
+.spec--port{aspect-ratio:4/5}
+.spec__tag{font-family:var(--sans);font-size:var(--t--1);font-weight:600;letter-spacing:.11em;text-transform:uppercase;opacity:.75}
+.spec__body{font-family:var(--sans);font-size:var(--t--1);font-weight:400;line-height:1.55;opacity:.6;margin:.9rem 0 0;max-width:40ch}
+.spec__body b{font-weight:600;opacity:.9}
+
+/* ---------- caption ---------- */
+figcaption{font-family:var(--sans);font-size:var(--t--1);font-weight:400;letter-spacing:.04em;opacity:.45;margin-top:.55rem}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.ftr{background:var(--ink-3);color:var(--chalk);padding:clamp(3.5rem,9vh,6.5rem) calc(var(--frame) + var(--pad)) calc(var(--frame) + 2rem)}
+.ftr__mark{font-family:var(--sans);font-weight:700;text-transform:uppercase;font-size:clamp(3rem,15.5vw,15rem);line-height:.82;
+  letter-spacing:-.005em;font-stretch:104%;margin:0 0 clamp(2rem,6vh,4rem);opacity:.96}
+.ftr__grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2.2rem clamp(1rem,3vw,2.4rem);border-top:1px solid var(--rule);padding-top:2.4rem}
+.city{grid-column:span 3}
+.city address{font-style:normal;font-family:var(--serif);font-weight:300;line-height:1.5;opacity:.82}
+.city h3{font-family:var(--sans);font-size:var(--t--1);font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin:0 0 .7rem;opacity:.5}
+.clock{font-family:var(--sans);font-weight:200;font-stretch:88%;font-size:var(--t-2);letter-spacing:-.01em;margin-top:.7rem;font-variant-numeric:tabular-nums}
+.clock i{font-style:normal;color:var(--signal)}
+.ftr__nav{grid-column:span 3;display:flex;flex-direction:column;gap:.45rem;font-family:var(--sans);font-size:var(--t-0);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+.ftr__nav a{opacity:.62;transition:opacity .3s}.ftr__nav a:hover{opacity:1}
+.ftr__social{grid-column:span 3;display:flex;flex-direction:column;gap:.45rem;font-family:var(--sans);font-size:var(--t-0);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+.ftr__social a{opacity:.62;transition:opacity .3s}.ftr__social a:hover{opacity:1}
+.ftr__mail{font-size:var(--t--1);letter-spacing:.05em}
+.ftr__legal{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;border-top:1px solid var(--rule);padding-top:1.4rem;margin-top:1.4rem;
+  font-family:var(--sans);font-size:var(--t--1);letter-spacing:.06em;opacity:.42}
+@media (max-width:900px){.city,.ftr__nav,.ftr__social{grid-column:span 6}}
+@media (max-width:560px){.city,.ftr__nav,.ftr__social{grid-column:1/-1}}
+
+/* ============================================================
+   MOBILE + TABLET — art-directed, not a shrunk desktop.
+   The desktop composition is the reference; the phone gets its
+   own crops, its own type scale and its own reading rhythm.
+   ============================================================ */
+
+/* ---- laptop / tablet: display type refitted to the narrower measure ---- */
+
+@media (max-width:1024px){
+  .crit__inner{padding-left:3.2rem}
+  .exp__item{grid-column:span 6}
+}
+
+/* ---- the sequence rail becomes a sequential counter ---- */
+.prog__steps{counter-reset:step}
+.step{counter-increment:step}
+@media (max-width:900px){
+  .step::before{content:counter(step,decimal-leading-zero) " / 05";display:block;
+    font-family:var(--sans);font-size:var(--t--1);font-weight:500;letter-spacing:.16em;opacity:.38;margin-bottom:1rem}
+}
+
+/* ---- ≤860: stacking, crops, targets ---- */
+@media (max-width:860px){
+  .chapter{padding-block:clamp(3rem,8vh,5rem)}
+  .chapter__fig,.chapter:nth-of-type(even) .chapter__fig{aspect-ratio:4/3}
+  .chapter__fig img{transform:none;object-position:center 58%}
+  .chapter:hover .chapter__fig img{transform:none}
+  .chapter__link{padding:.6rem 0 1.4rem}
+  .chapter__body .sign--lg::after{bottom:-.06em}
+  .step__fig--right,.step__fig--mid{width:100%;margin-left:0}
+  .spec--wide,.spec--land{aspect-ratio:4/3}
+  .plate{max-height:62vh;object-position:center 58%}
+  .intro__bg img{object-position:50% 56%}
+}
+
+/* ---- ≤760: photography strip recomposed ---- */
+@media (max-width:760px){
+  .projects{gap:clamp(2.4rem,7vw,3.4rem)}
+  .exp{gap:clamp(2rem,6vw,3rem)}
+  .exp__item{grid-column:1/-1}
+}
+
+/* ---- ≤700: footer stacks into a hierarchy rather than thin columns ---- */
+@media (max-width:700px){
+  .ftr{padding-top:clamp(3rem,8vh,5rem)}
+  .ftr__grid{gap:1.7rem;padding-top:2rem}
+  .city{grid-column:1/-1;padding-bottom:1.7rem;border-bottom:1px solid var(--rule)}
+  .city h3{margin-bottom:.55rem}
+  .clock{font-size:var(--t-1);margin-top:.55rem}
+  .ftr__nav,.ftr__social{grid-column:span 6;gap:.9rem}
+  .ftr__legal{flex-direction:column;gap:.5rem;padding-top:1.6rem;margin-top:1.6rem}
+}
+
+/* ---- ≤640: criteria sheet re-set for a narrow column ---- */
+@media (max-width:640px){
+  .crit__head{grid-template-columns:auto 1fr 1.5rem;gap:.55rem .9rem;padding:1.15rem 0 1.25rem}
+  .crit__no{grid-column:1;grid-row:1;align-self:center}
+  .crit__hint{grid-column:2;grid-row:1;justify-self:end;align-self:center;display:block;font-size:var(--t--1)}
+  .crit__name{grid-column:1/3;grid-row:2;font-size:clamp(1.35rem,7vw,2.1rem)}
+  .crit__tog{grid-column:3;grid-row:1/3;align-self:center}
+  .crit__inner{padding-left:0;padding-bottom:clamp(1.4rem,5vh,2.2rem);gap:1.5rem}
+  .crit__data dl{gap:.4rem .9rem}
+  .values li{grid-template-columns:1.9rem 1fr;gap:.9rem;padding:.95rem 0}
+  .values span{font-size:var(--t-1);line-height:1.2}
+  .cta{gap:1.6rem}
+  .btn{padding:1rem 1.6rem;width:100%;text-align:center}
+  .btns{width:100%;gap:.7rem}
+}
+
+/* ---- ≤560: intro meta stacks ---- */
+@media (max-width:560px){
+  .intro__meta{flex-direction:column;align-items:flex-start;gap:.4rem;margin-top:1.1rem}
+  .ftr__nav,.ftr__social{grid-column:1/-1}
+  .ftr__nav{padding-bottom:1.3rem;border-bottom:1px solid var(--rule)}
+}
+
+/* ---- ≤520: the phone type scale ----
+   Dramatic display type is kept, refitted to the measure rather than
+   allowed to run past the gutter. ---- */
+@media (max-width:520px){
+  :root{
+    --t-3:clamp(1.42rem,6.5vw,2.2rem);
+    --t-4:clamp(1.85rem,8.4vw,2.7rem);
+  }
+  .mark{font-size:11.4vw;letter-spacing:.145em}
+  .sign--xl{font-size:clamp(2.3rem,12.4vw,4rem);letter-spacing:.005em}
+  .sign--lg{font-size:clamp(1.9rem,8.6vw,2.7rem);font-stretch:98%}
+  .mission__frame{font-size:clamp(1.65rem,8vw,2.4rem);max-width:none}
+  .lexicon__word{letter-spacing:.04em;font-stretch:100%}
+  .ftr__mark{font-size:14.6vw;letter-spacing:.005em}
+  .hero{min-height:30rem}
+  .hero__stmt{font-size:var(--t-0);max-width:32ch}
+  .elev figure{width:min(52vw,11rem)}
+  .pad-y-lg{padding-block:clamp(4rem,11vh,7rem)}
+  .about__coda{margin-top:clamp(2rem,6vh,3.4rem)}
+  .step{padding-block:2.4rem}
+  .spec{min-height:10.5rem;padding:1rem}
+  .marquee span{font-size:clamp(2.6rem,15vw,5rem)}
+}
+
+/* ---- ≤380: last-inch safety ---- */
+@media (max-width:380px){
+  .mark{font-size:11vw;letter-spacing:.125em}
+  .sign--lg{font-size:8.2vw}
+  .lexicon__word{font-size:6vw}
+  .nav,.sheet a{letter-spacing:.1em}
+}
+
+/* ---- touch: no hover dependencies ---- */
+@media (hover:none){
+  .chapter__fig img{transform:none}
+  .chapter__link:hover .chapter__desc{opacity:1}
+  .chapter__body .sign--lg::after{transform:scaleX(1);opacity:.55}
+  .nav a,.social a,.ftr__nav a,.ftr__social a{opacity:.9}
+  .crit__head:hover .crit__name{opacity:1}
+}
+
+/* ---- reduced motion: a restrained cross-fade, no travel ---- */
+@media (prefers-reduced-motion:reduce){
+  .rot>i{transition:opacity .45s linear !important;transform:none !important}
+  .rot>i.out{opacity:0}
+  .elev__run{animation:none !important}
+  .marquee__run{animation:none !important}
+  .intro__bg img:first-child{opacity:1 !important}
+}
+
+/* ---- grids collapse to a single column rather than keeping 11 dead gaps ---- */
+@media (max-width:900px){
+  .about,.prog{grid-template-columns:minmax(0,1fr);column-gap:0}
+  /* display copy keeps a display measure once the columns collapse */
+  .lede{max-width:30ch}
+  .pad-y-lg{padding-block:clamp(4.5rem,11vh,8rem)}
+  .about__body{margin-top:.2rem}
+}
+@media (max-width:860px){
+  .chapter,.crit__inner{grid-template-columns:minmax(0,1fr);column-gap:0}
+}
+@media (max-width:820px){
+  .projects,.exp{grid-template-columns:minmax(0,1fr);column-gap:0}
+}
+@media (max-width:700px){
+  .ftr__grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(1rem,4.5vw,2rem);row-gap:1.7rem}
+  .ftr__nav,.ftr__social{grid-column:span 1}
+}
+@media (max-width:560px){
+  .ftr__grid{grid-template-columns:minmax(0,1fr);column-gap:0}
+  .ftr__nav,.ftr__social{grid-column:1/-1}
+}
+
+/* ---------- new image containers + per-slot cropping ----------
+   Crops are set per photograph and per breakpoint rather than
+   defaulting everything to object-position:center.                */
+.step__fig--band img{width:100%;aspect-ratio:16/7;object-fit:cover;object-position:center 54%}
+.proj-img{width:100%;aspect-ratio:3/2;object-fit:cover;object-position:center 50%}
+.exp__img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 55%}
+
+/* desktop: chapter portraits match their 4:5 container exactly, so no crop.
+   the plate favours the shopfronts over sky. */
+.plate{object-position:center 55%}
+
+/* intro backgrounds — tall mobile containers crop hard off wide sources */
+#page-advisory .intro__bg img:nth-child(1){object-position:50% 52%}
+#page-advisory .intro__bg img:nth-child(2){object-position:55% 50%}
+#page-advisory .intro__bg img:nth-child(3){object-position:50% 50%}
+#page-tenants  .intro__bg img:nth-child(1){object-position:58% 56%}
+#page-tenants  .intro__bg img:nth-child(2){object-position:52% 54%}
+#page-tenants  .intro__bg img:nth-child(3){object-position:52% 58%}
+
+@media (max-width:860px){
+  /* the 4:5 portraits become 4:3 here — hold each subject, not the frame centre */
+  .chapter:nth-of-type(1) .chapter__fig img{object-position:center 52%}
+  .chapter:nth-of-type(2) .chapter__fig img{object-position:center 46%}
+  .chapter:nth-of-type(3) .chapter__fig img{object-position:center 50%}
+  .step__fig--band img{aspect-ratio:4/3;object-position:center 52%}
+  .plate{object-position:center 52%}
+}
+@media (max-width:640px){
+  .step__fig--band img{aspect-ratio:5/4}
+}
+
+/* ---------- Tenants hero — four-image dissolve ----------
+   Same container, same dimensions, one photograph at a time.
+   ~5.5s per image, ~1.2s crossfade, and a far gentler drift than the
+   Advisory intro so two of the four (portrait sources) stay steady.   */
+#page-tenants .intro__bg img{animation-name:dissolve;animation-duration:22s}
+#page-tenants .intro__bg img:nth-child(1){animation-delay:0s}
+#page-tenants .intro__bg img:nth-child(2){animation-delay:5.5s}
+#page-tenants .intro__bg img:nth-child(3){animation-delay:11s}
+#page-tenants .intro__bg img:nth-child(4){animation-delay:16.5s}
+@keyframes dissolve{
+  0%{opacity:0;transform:scale(1.005)}
+  5.5%{opacity:1}
+  25%{opacity:1}
+  30.5%{opacity:0}
+  100%{opacity:0;transform:scale(1.045)}
+}
+/* individually judged crops — two landscape sources, two portrait */
+#page-tenants .intro__bg img:nth-child(1){object-position:50% 56%}
+#page-tenants .intro__bg img:nth-child(2){object-position:50% 52%}
+#page-tenants .intro__bg img:nth-child(3){object-position:50% 50%}
+#page-tenants .intro__bg img:nth-child(4){object-position:50% 74%}
+
+@media (max-width:860px){
+  /* portrait sources now sit almost natively; landscape sources crop wide */
+  #page-tenants .intro__bg img:nth-child(1){object-position:54% 52%}
+  #page-tenants .intro__bg img:nth-child(2){object-position:50% 50%}
+  #page-tenants .intro__bg img:nth-child(3){object-position:50% 46%}
+  #page-tenants .intro__bg img:nth-child(4){object-position:50% 54%}
+}
+@media (max-width:760px){
+  .strip{grid-template-columns:minmax(0,1fr);gap:clamp(.9rem,3.4vw,1.4rem)}
+  .strip img{aspect-ratio:4/3}
+  .strip figure:nth-child(1) img{object-position:50% 52%}
+  .strip figure:nth-child(2) img{object-position:48% 58%}
+  .strip figure:nth-child(3) img{object-position:50% 55%}
+}
+
+/* ---------- Advisory hero — three-image dissolve ----------
+   16.5s cycle, 5.5s per photograph, ~1.2s crossfade. Same container,
+   one image at a time, no layout shift.                              */
+#page-advisory .intro__bg img{animation-name:dissolve3;animation-duration:16.5s}
+#page-advisory .intro__bg img:nth-child(1){animation-delay:0s}
+#page-advisory .intro__bg img:nth-child(2){animation-delay:5.5s}
+#page-advisory .intro__bg img:nth-child(3){animation-delay:11s}
+@keyframes dissolve3{
+  0%{opacity:0;transform:scale(1.005)}
+  7.3%{opacity:1}
+  33.3%{opacity:1}
+  40.6%{opacity:0}
+  100%{opacity:0;transform:scale(1.05)}
+}
+/* crops judged per photograph, and deliberately different from the same
+   images' other placements (Development, Investments plate) */
+#page-advisory .intro__bg img:nth-child(1){object-position:50% 58%}
+#page-advisory .intro__bg img:nth-child(2){object-position:50% 55%}
+#page-advisory .intro__bg img:nth-child(3){object-position:45% 58%}
+.plate{object-position:45% 48%}
+
+@media (max-width:860px){
+  #page-advisory .intro__bg img:nth-child(1){object-position:42% 56%}
+  #page-advisory .intro__bg img:nth-child(2){object-position:50% 52%}
+  #page-advisory .intro__bg img:nth-child(3){object-position:56% 58%}
+  .plate{object-position:48% 50%}
+}
+
+/* tiles: Buck Mason signage must survive the 4:3 mobile crop */
+.strip figure:nth-child(1) img{object-position:50% 50%}
+.strip figure:nth-child(3) img{object-position:50% 45%}
+@media (max-width:760px){
+  .strip figure:nth-child(1) img{object-position:50% 16%}
+  .strip figure:nth-child(3) img{object-position:50% 28%}
+}
+
+/* ---------- Advisory service images — one container system ----------
+   Vision, Design, Development and Leasing previously inherited four
+   different widths and aspect ratios from their source files. They now
+   share a single full-width 3:2 frame (4:3 on phones), with the crop of
+   each photograph judged individually rather than centre-cropped.     */
+.step__fig,
+.step__fig--full,
+.step__fig--right,
+.step__fig--mid,
+.step__fig--band{width:100%;margin-left:0;margin-right:0}
+.step__fig img,
+.step__fig--band img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;height:auto}
+
+.step[data-step="0"] .step__fig img{object-position:50% 50%}   /* Vision — near-native 3:2 */
+.step[data-step="1"] .step__fig img{object-position:50% 50%}   /* Design — cut to 3:2 at export */
+.step[data-step="2"] .step__fig img{object-position:50% 54%}   /* Development — drop sky, hold the street wall */
+.step[data-step="3"] .step__fig img{object-position:50% 52%}   /* Leasing — hold the shopfront above the kerb */
+
+@media (max-width:760px){
+  .step__fig img,
+  .step__fig--band img{aspect-ratio:4/3}
+  .step[data-step="0"] .step__fig img{object-position:50% 50%}
+  .step[data-step="1"] .step__fig img{object-position:56% 50%}
+  .step[data-step="2"] .step__fig img{object-position:48% 55%}
+  .step[data-step="3"] .step__fig img{object-position:50% 52%}
+}
+
+/* the two swapped photographs, re-judged for their new frames */
+.chapter:nth-of-type(3) .chapter__fig img{object-position:center 50%}
+.strip figure:nth-child(1) img{object-position:50% 50%}
+@media (max-width:860px){
+  /* BUCK MASON sits high in the frame — hold it through the 4:3 crop */
+  .chapter:nth-of-type(3) .chapter__fig img{object-position:center 16%}
+}
+@media (max-width:760px){
+  .strip figure:nth-child(1) img{object-position:50% 28%}
+}
+</style>
+</head>
+<body>
+<div class="edge" aria-hidden="true"></div>
+<div class="dot" aria-hidden="true"></div>
+
+<a class="skip" href="#main" style="position:absolute;left:-9999px">Skip to content</a>
+
+<header class="hdr">
+  <div class="hdr__slot" id="slot"><span>Mercado</span></div>
+  <nav class="nav" aria-label="Primary">
+    <a href="#/" data-route="/">Home</a>
+    <a href="#/advisory" data-route="/advisory">Advisory</a>
+    <a href="#/investments" data-route="/investments">Investments</a>
+    <a href="#/tenants" data-route="/tenants">Tenants</a>
+  </nav>
+  <div class="social">
+    <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="sheet">Menu</button>
+</header>
+
+<div class="sheet" id="sheet" tabindex="-1" aria-hidden="true" aria-label="Site menu">
+  <p class="sheet__brand">Mercado</p>
+  <button class="sheet__close" id="sheetClose">Close</button>
+  <nav aria-label="Mobile">
+    <a href="#/" data-route="/">Home</a>
+    <a href="#/advisory" data-route="/advisory">Advisory</a>
+    <a href="#/investments" data-route="/investments">Investments</a>
+    <a href="#/tenants" data-route="/tenants">Tenants</a>
+  </nav>
+  <div class="sheet__foot">
+    <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:hello@mercado.partners">hello@mercado.partners</a>
+  </div>
+</div>
+
+<div class="mark" id="mark" aria-hidden="true">Mercado</div>
+
+<main id="main">
+
+<!-- ========================= HOME ========================= -->
+<div class="page" id="page-home">
+
+  <section class="hero" data-tone="ink">
+    <div class="elev" id="elev">
+      <div class="elev__run">
+        <figure><img decoding="async" src="assets/sf-general.webp" alt="Dark-painted General Store shopfront with bread in the windows" fetchpriority="high"></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-laundress.webp" alt="Awning-shaded shopfront on a townhouse block"></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-alfred.webp" alt="White brick corner cafe with a striped awning and sidewalk seating"></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-stable.webp" alt="Two-storey brick building housing a cafe, cyclist passing"></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-stoffer.webp" alt="Painted brick shopfront with warm-lit interior"></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-piece.webp" alt="Yellow shopfront with a pedestrian and dog passing"></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-buckmason.webp" alt="Black brick single-storey store open to the street"></figure>
+      </div>
+      <div class="elev__run" aria-hidden="true">
+        <figure><img loading="lazy" decoding="async" src="assets/sf-general.webp" alt=""></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-laundress.webp" alt=""></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-alfred.webp" alt=""></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-stable.webp" alt=""></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-stoffer.webp" alt=""></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-piece.webp" alt=""></figure>
+        <figure><img loading="lazy" decoding="async" src="assets/sf-buckmason.webp" alt=""></figure>
+      </div>
+    </div>
+    <div class="hero__veil" aria-hidden="true"></div>
+    <div class="hero__datum" aria-hidden="true"></div>
+    <h1 class="sr-only" style="position:absolute;left:-9999px">Mercado — retail real estate investment and advisory</h1>
+    <div class="hero__foot">
+      <p class="hero__stmt">An integrated retail real estate investment and advisory platform, working at the scale of the ground plane.</p>
+      <p class="hero__scroll">Scroll</p>
+    </div>
+  </section>
+
+  <section class="tone-stone pad-y-lg wrap" data-tone="stone">
+    <div class="about">
+      <p class="note about__eyebrow">About us</p>
+      <div class="about__body">
+        <p class="lede rv">We craft immersive retail environments that embody the distinct character and individuality intrinsic to the communities they inhabit.</p>
+        <p class="prose prose--wide rv rv-d2" style="margin-top:1.8rem">Whether a master-planned district or a street-front retail collection, our properties are vibrant hubs where people come together to live, work, shop, dine, and embrace life.</p>
+      </div>
+      <div class="about__coda rv rv-d3">
+        <p>We shape spaces that captivate today, endure tomorrow, and <em style="font-style:normal;border-bottom:2px solid var(--signal)">resonate for generations</em>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-stone wrap lexicon" data-tone="stone">
+    <hr class="rule lexicon__rule">
+    <p class="lexicon__word">
+      <span class="rot rot--lex" data-rot='["Streetscape","Groundplane","Placemaking","Humanscale","Brandbuilder","Storyteller"]'></span>
+    </p>
+  </section>
+
+  <section class="tone-ink wrap" data-tone="ink" style="padding-block:clamp(2rem,5vh,4rem)">
+    <article class="chapter" style="border-top:0">
+      <figure class="chapter__fig"><img loading="lazy" decoding="async" src="assets/ch-advisory.webp" alt="Birkenstock&#39;s gabled timber shopfront on Abbot Kinney Boulevard, Venice"></figure>
+      <div class="chapter__body">
+        <a class="chapter__link" href="#/advisory">
+          <p class="note rv">01 — Advisory</p>
+          <h2 class="sign sign--lg rv rv-d1"><span>Advisory</span></h2>
+          <p class="chapter__desc rv rv-d2">Strategic advisory and outsourced functionality, from vision through capitalization.</p>
+        </a>
+      </div>
+    </article>
+    <article class="chapter">
+      <figure class="chapter__fig"><img loading="lazy" decoding="async" src="assets/ch-investments.webp" alt="South to North storefront on South Congress Avenue, Austin"></figure>
+      <div class="chapter__body">
+        <a class="chapter__link" href="#/investments">
+          <p class="note rv">02 — Investments</p>
+          <h2 class="sign sign--lg rv rv-d1"><span>Investments</span></h2>
+          <p class="chapter__desc rv rv-d2">Aggregate main street and neighborhood retail.</p>
+        </a>
+      </div>
+    </article>
+    <article class="chapter">
+      <figure class="chapter__fig"><img loading="lazy" decoding="async" src="assets/ch-tenants.webp" alt="Buck Mason storefront — brick pier, full signage and an open shopfront onto the sidewalk"></figure>
+      <div class="chapter__body">
+        <a class="chapter__link" href="#/tenants">
+          <p class="note rv">03 — Tenants</p>
+          <h2 class="sign sign--lg rv rv-d1"><span>Tenants</span></h2>
+          <p class="chapter__desc rv rv-d2">Combine analytics with community individuality.</p>
+        </a>
+      </div>
+    </article>
+  </section>
+
+  <section class="tone-stone pad-y-lg wrap mission" data-tone="stone">
+    <p class="note rv">Mission</p>
+    <p class="mission__frame rv rv-d1" style="margin:1.6rem 0 0">
+      Our <span class="rot" data-rot='["investors","tenants","patrons"]'></span><br>
+      are our <span class="rot" data-rot='["partners","customers","guests"]'></span>.
+    </p>
+  </section>
+
+</div>
+
+<!-- ========================= ADVISORY ========================= -->
+<div class="page" id="page-advisory">
+
+  <section class="intro" data-tone="ink">
+    <div class="intro__bg" aria-hidden="true">
+      <img decoding="async" fetchpriority="high" src="assets/adv-bg-1.webp" alt="">
+      <img loading="lazy" decoding="async" src="assets/adv-bg-2.webp" alt="">
+      <img loading="lazy" decoding="async" src="assets/adv-bg-3.webp" alt="">
+    </div>
+    <div class="intro__veil" aria-hidden="true"></div>
+    <div class="intro__inner wrap">
+      <h1 class="sign sign--xl">Advisory</h1>
+      <div class="intro__meta">
+        <p class="note" style="opacity:.7">Services</p>
+        <p class="note" style="opacity:.7">Vision → Capitalization</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-stone pad-y wrap" data-tone="stone">
+    <div class="about">
+      <p class="note about__eyebrow">Overview</p>
+      <div class="about__body">
+        <p class="lede rv">Retail is a highly specialized discipline, and generalist firms routinely seek external proficiency to execute it.</p>
+        <p class="prose prose--wide rv rv-d2" style="margin-top:1.8rem">In select instances Mercado advises clients on retail pursuits, offering intellectual retail capital built through decades of specific experience. Our strategic roles range from an outsourced solution to a full partner across vision, design, development, leasing and capitalization.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-stone wrap" style="padding-bottom:clamp(4rem,10vh,8rem)" data-tone="stone">
+    <div class="prog">
+      <div class="prog__rail" aria-hidden="true">
+        <ol id="rail">
+          <li data-step="0">Vision</li>
+          <li data-step="1">Design</li>
+          <li data-step="2">Development</li>
+          <li data-step="3">Leasing</li>
+          <li data-step="4">Capitalization</li>
+        </ol>
+      </div>
+      <div class="prog__steps">
+
+        <article class="step" data-step="0">
+          <p class="note rv">Vision partner</p>
+          <h3 class="rv rv-d1">Vision</h3>
+          <p class="rv rv-d2">Set and maintain the north star across retail spaces and the public realm.</p>
+          <figure class="step__fig step__fig--full rv rv-d3">
+            <img loading="lazy" decoding="async" src="assets/adv-vision.webp" alt="Park Avenue, Winter Park — brick roadway, street trees and continuous retail frontage">
+            <figcaption>The public realm is the first tenant. Everything else is merchandised against it.</figcaption>
+          </figure>
+        </article>
+
+        <article class="step" data-step="1">
+          <p class="note rv">Design execution</p>
+          <h3 class="rv rv-d1">Design</h3>
+          <p class="rv rv-d2">Manage Architecture RFP, design direction, feasibility and drawing completion.</p>
+          <figure class="step__fig step__fig--right rv rv-d3">
+            <img loading="lazy" decoding="async" src="assets/adv-design.webp" alt="Henderson Avenue, Dallas — corrugated metal façade and lit glazing of a restaurant pavilion at dusk">
+            <figcaption>Awning, sill, transom, threshold — design decisions the customer reads at three feet.</figcaption>
+          </figure>
+        </article>
+
+        <article class="step" data-step="2">
+          <p class="note rv">Development execution</p>
+          <h3 class="rv rv-d1">Development</h3>
+          <p class="rv rv-d2">Manage large-scale ground-up developments and redevelopment.</p>
+          <figure class="step__fig step__fig--full step__fig--band rv rv-d3">
+            <img decoding="async" loading="lazy" src="assets/adv-development.webp" alt="Henderson Avenue, Dallas — ground-up mixed-use buildings with ground-floor retail and a pedestrian passage">
+            <figcaption>Henderson Avenue, Dallas.</figcaption>
+          </figure>
+        </article>
+
+        <article class="step" data-step="3">
+          <p class="note rv">Leasing execution</p>
+          <h3 class="rv rv-d1">Leasing</h3>
+          <p class="rv rv-d2">Data-driven intelligence, merchandising strategy and marketing oversight.</p>
+          <figure class="step__fig step__fig--mid rv rv-d3">
+            <img loading="lazy" decoding="async" src="assets/adv-leasing.webp" alt="Zadig &amp; Voltaire storefront on Abbot Kinney Boulevard, Venice, with a pedestrian passing at dusk">
+            <figcaption>Merchandising is adjacency: who sits next to whom, and what the block reads like at walking pace.</figcaption>
+          </figure>
+        </article>
+
+        <article class="step" data-step="4">
+          <p class="note rv">Capitalization execution</p>
+          <h3 class="rv rv-d1">Capitalization</h3>
+          <p class="rv rv-d2">An outsourced finance desk across debt and equity.</p>
+          <p class="num rv rv-d3" style="font-size:var(--t-4);line-height:.9;margin:.6rem 0 0;opacity:.28">Debt / Equity</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-ink pad-y wrap cta" data-tone="ink">
+    <h2 class="sign sign--md rv">Have a retail problem worth solving?</h2>
+    <div class="btns rv rv-d2">
+      <a class="btn" href="mailto:hello@mercado.partners?subject=Project%20discussion">Discuss a project</a>
+    </div>
+  </section>
+
+  <section class="tone-ink wrap" style="padding-bottom:clamp(5rem,12vh,9rem)" data-tone="ink">
+    <p class="note rv" style="margin-bottom:2rem">Projects</p>
+    <div class="projects">
+      <a class="project rv" href="https://www.miamifreedompark.com" target="_blank" rel="noopener">
+        <figure>
+          <img class="proj-img" decoding="async" loading="lazy" src="assets/proj-mfp.webp" alt="Aerial view of Miami Freedom Park at sunset, the stadium and retail village set against the Miami skyline">
+        </figure>
+        <h3>Miami Freedom Park</h3>
+        <span class="more">miamifreedompark.com</span>
+      </a>
+      <a class="project rv rv-d2" href="https://www.oceanuspb.com" target="_blank" rel="noopener">
+        <figure>
+          <img class="proj-img" decoding="async" loading="lazy" src="assets/proj-oceanus.webp" alt="Oceanus, a coastal retail and dining district, its plaza and storefronts opening to the water at dusk">
+        </figure>
+        <h3>Oceanus</h3>
+        <span class="more">oceanuspb.com</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<!-- ========================= INVESTMENTS ========================= -->
+<div class="page" id="page-investments">
+
+  <section class="tone-ink" data-tone="ink" style="padding-top:clamp(9rem,26vh,16rem);padding-bottom:clamp(2rem,6vh,4rem)">
+    <div class="wrap"><h1 class="note" style="opacity:.6">Investments</h1></div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__run">
+        <span>Investments</span><span>Investments</span><span>Investments</span><span>Investments</span>
+        <span>Investments</span><span>Investments</span><span>Investments</span><span>Investments</span>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:clamp(2rem,6vh,4rem)">
+      <p class="lede rv" style="max-width:26ch">Programmatic vehicles of irreplaceable community retail infrastructure.</p>
+    </div>
+  </section>
+
+  <section class="tone-stone pad-y wrap" data-tone="stone">
+    <div class="about">
+      <p class="note about__eyebrow">Overview</p>
+      <div class="about__body">
+        <p class="lede rv">Mercado is an integrated retail real estate investment platform creating value across streets and neighborhoods throughout the country.</p>
+        <p class="prose prose--wide rv rv-d2" style="margin-top:1.8rem">A methodical investment strategy leverages sector trends to capture scalable thematic opportunities. The specialized platform creates incremental alpha at every phase of the business plan and asset life cycle.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-stone" data-tone="stone" style="padding-bottom:clamp(3rem,8vh,5rem)">
+    <figure style="margin:0">
+      <img loading="lazy" decoding="async" class="plate" src="assets/inv-plate.webp" alt="A low-rise retail block at dusk, continuous storefronts set behind mature street trees">
+    </figure>
+  </section>
+
+  <section class="tone-stone wrap" data-tone="stone" style="padding-bottom:clamp(5rem,13vh,9rem)">
+    <p class="note rv" style="margin-bottom:1.6rem">Criteria</p>
+    <div class="crit" id="crit">
+
+      <div class="crit__row">
+        <button class="crit__head" aria-expanded="false">
+          <span class="crit__no">01</span>
+          <span class="crit__name">Geography</span>
+          <span class="crit__hint">National</span>
+          <span class="crit__tog" aria-hidden="true">+</span>
+        </button>
+        <div class="crit__panel"><div class="crit__inner">
+          <div class="crit__text"><p>Streets and neighborhoods throughout the country. The unit of analysis is the corridor as much as the building — its tenancy, its frontage, and how people move along it.</p></div>
+        </div></div>
+      </div>
+
+      <div class="crit__row">
+        <button class="crit__head" aria-expanded="false">
+          <span class="crit__no">02</span>
+          <span class="crit__name">Size</span>
+          <span class="crit__hint">$10 – $50 million</span>
+          <span class="crit__tog" aria-hidden="true">+</span>
+        </button>
+        <div class="crit__panel"><div class="crit__inner">
+          <div class="crit__text"><p>Individual assets between ten and fifty million dollars.</p></div>
+          <div class="crit__data">
+            <p class="crit__big">$10–50m</p>
+            <p class="note" style="margin:.5rem 0 0">Per asset</p>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="crit__row">
+        <button class="crit__head" aria-expanded="false">
+          <span class="crit__no">03</span>
+          <span class="crit__name">Profile</span>
+          <span class="crit__hint">Four asset types</span>
+          <span class="crit__tog" aria-hidden="true">+</span>
+        </button>
+        <div class="crit__panel"><div class="crit__inner">
+          <div class="crit__text"><p>Retail that sits on a street rather than behind a parking field, plus the low-coverage sites whose real value is the land under them.</p></div>
+          <div class="crit__data"><dl>
+            <dt>01</dt><dd>Street retail</dd>
+            <dt>02</dt><dd>Neighborhood center</dd>
+            <dt>03</dt><dd>Dispersed single-story office</dd>
+            <dt>04</dt><dd>Low coverage</dd>
+          </dl></div>
+        </div></div>
+      </div>
+
+      <div class="crit__row">
+        <button class="crit__head" aria-expanded="false">
+          <span class="crit__no">04</span>
+          <span class="crit__name">Opportunity</span>
+          <span class="crit__hint">Value-add</span>
+          <span class="crit__tog" aria-hidden="true">+</span>
+        </button>
+        <div class="crit__panel"><div class="crit__inner">
+          <div class="crit__text"><p>The conditions that price an asset down and that an operator can fix: rent that rolls soon, space that is empty, maintenance that was deferred, and leasing costs a passive owner would rather not carry.</p></div>
+          <div class="crit__data"><dl>
+            <dt>01</dt><dd>Value-add potential</dd>
+            <dt>02</dt><dd>Short-term leases</dd>
+            <dt>03</dt><dd>In-place vacancy</dd>
+            <dt>04</dt><dd>Deferred maintenance</dd>
+            <dt>05</dt><dd>Leasing costs</dd>
+          </dl></div>
+        </div></div>
+      </div>
+
+      <div class="crit__row">
+        <button class="crit__head" aria-expanded="false">
+          <span class="crit__no">05</span>
+          <span class="crit__name">Structure</span>
+          <span class="crit__hint">Three routes</span>
+          <span class="crit__tog" aria-hidden="true">+</span>
+        </button>
+        <div class="crit__panel"><div class="crit__inner">
+          <div class="crit__text"><p>Three routes into an asset: outright ownership, partnership, or a position in the capital stack.</p></div>
+          <div class="crit__data"><dl>
+            <dt>01</dt><dd>Fee simple</dd>
+            <dt>02</dt><dd>Joint venture</dd>
+            <dt>03</dt><dd>Preferred equity</dd>
+          </dl></div>
+        </div></div>
+      </div>
+
+      <div class="crit__row">
+        <button class="crit__head" aria-expanded="false">
+          <span class="crit__no">06</span>
+          <span class="crit__name">Demographics</span>
+          <span class="crit__hint">1 / 3 / 5 mile</span>
+          <span class="crit__tog" aria-hidden="true">+</span>
+        </button>
+        <div class="crit__panel"><div class="crit__inner">
+          <div class="crit__text"><p>Every corridor is read at one, three and five miles — the rings that separate a walk-up trade area from a drive-to one.</p></div>
+          <div class="crit__data">
+            <p class="crit__big">1 · 3 · 5</p>
+            <p class="note" style="margin:.5rem 0 0">Radius, miles</p>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="tone-ink pad-y wrap cta" data-tone="ink">
+    <h2 class="sign sign--md rv">Bring us a corridor, or bring us capital.</h2>
+    <div class="btns rv rv-d2">
+      <a class="btn" href="mailto:investments@mercado.partners?subject=Opportunity">Submit an opportunity</a>
+      <a class="btn" href="mailto:investments@mercado.partners?subject=Investing">Investing enquiries</a>
+    </div>
+  </section>
+
+  <section class="tone-ink wrap" data-tone="ink" style="padding-bottom:clamp(5rem,12vh,9rem)">
+    <p class="note rv" style="margin-bottom:2rem">Experience</p>
+    <div class="exp">
+      <a class="exp__item rv" href="https://www.instagram.com/westadamsla/" target="_blank" rel="noopener">
+        <img class="exp__img" decoding="async" loading="lazy" src="assets/exp-westadams.webp" alt="Museum of Ice Cream — the arched central gallery of an experiential retail concept">
+        <h3>West Adams Boulevard</h3>
+        <p>Los Angeles</p>
+        <span class="more">@westadamsla</span>
+      </a>
+      <a class="exp__item rv rv-d2" href="https://www.instagram.com/hendersonavedallas/" target="_blank" rel="noopener">
+        <img class="exp__img" decoding="async" loading="lazy" src="assets/exp-henderson.webp" alt="Henderson Avenue, Dallas — a louvered gabled retail pavilion set back behind planting">
+        <h3>Henderson Avenue</h3>
+        <p>Dallas</p>
+        <span class="more">@hendersonavedallas</span>
+      </a>
+      <a class="exp__item rv rv-d3" href="https://www.instagram.com/avantagenewbury/" target="_blank" rel="noopener">
+        <img class="exp__img" decoding="async" loading="lazy" src="assets/exp-newbury.webp" alt="Madewell storefront in a brick building on Newbury Street, Boston">
+        <h3>Newbury Street</h3>
+        <p>Boston</p>
+        <span class="more">@avantagenewbury</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<!-- ========================= TENANTS ========================= -->
+<div class="page" id="page-tenants">
+
+  <section class="intro" data-tone="ink">
+    <div class="intro__bg" aria-hidden="true">
+      <img decoding="async" fetchpriority="high" src="assets/ten-hero-1.webp" alt="">
+      <img loading="lazy" decoding="async" src="assets/ten-hero-2.webp" alt="">
+      <img loading="lazy" decoding="async" src="assets/ten-hero-3.webp" alt="">
+      <img loading="lazy" decoding="async" src="assets/ten-hero-4.webp" alt="">
+    </div>
+    <div class="intro__veil" aria-hidden="true"></div>
+    <div class="intro__inner wrap">
+      <h1 class="sign sign--xl">Tenants</h1>
+      <div class="intro__meta">
+        <p class="note" style="opacity:.7">Brands, operators, representatives</p>
+        <p class="note" style="opacity:.7">First to market</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-stone pad-y wrap" data-tone="stone">
+    <div class="about">
+      <p class="note about__eyebrow">Overview</p>
+      <div class="about__body">
+        <p class="lede rv">We use data-driven methods to optimize brand and site selection — attracting valuable customers to our properties while mitigating turnover risk and safeguarding capital.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tone-ink pad-y wrap" data-tone="ink">
+    <p class="note rv" style="margin-bottom:1.8rem">What we look for</p>
+    <ul class="values">
+      <li class="rv"><b>01</b><span>Supporting independent brands</span></li>
+      <li class="rv rv-d1"><b>02</b><span>Fostering emerging talent</span></li>
+      <li class="rv rv-d2"><b>03</b><span>Introducing first-to-market concepts</span></li>
+      <li class="rv rv-d3"><b>04</b><span>Applying global ideas locally</span></li>
+      <li class="rv rv-d4"><b>05</b><span>Building communities through programming</span></li>
+    </ul>
+  </section>
+
+  <section class="tone-ink wrap" data-tone="ink" style="padding-bottom:clamp(4rem,10vh,7rem)">
+    <div class="strip">
+      <figure class="rv"><img loading="lazy" decoding="async" src="assets/tile-1.webp" alt="Diners at The Butcher&#39;s Daughter on Abbot Kinney Boulevard, Venice"></figure>
+      <figure class="rv rv-d1"><img loading="lazy" decoding="async" src="assets/tile-2.webp" alt="Dusk on a retail block, lit storefronts and people on the sidewalk"></figure>
+      <figure class="rv rv-d2"><img loading="lazy" decoding="async" src="assets/tile-3.webp" alt="Buck Mason blade sign above a white cottage storefront and planted forecourt"></figure>
+    </div>
+    <p class="note rv rv-d3" style="margin-top:1.1rem">Merchandising, signage, sidewalk life — the evidence that a tenant chose the street, not a floor plate.</p>
+  </section>
+
+  <section class="tone-stone pad-y wrap cta" data-tone="stone">
+    <h2 class="sign sign--md rv" style="max-width:20ch">If you are a tenant or representative interested in connecting — generally or about a specific space.</h2>
+    <div class="btns rv rv-d2">
+      <a class="btn" href="mailto:leasing@mercado.partners?subject=Tenant%20enquiry">Get in touch</a>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<footer class="ftr">
+  <p class="ftr__mark">Mercado</p>
+  <div class="ftr__grid">
+    <div class="city">
+      <h3>Los Angeles</h3>
+      <address>15821 Ventura Boulevard<br>Los Angeles, CA 91436</address>
+      <p class="clock"><span id="clockLA">—:—:—</span> <i>PT</i></p>
+    </div>
+    <div class="city">
+      <h3>Miami</h3>
+      <address>800 Douglas Road<br>Miami, FL 33134</address>
+      <p class="clock"><span id="clockMIA">—:—:—</span> <i>ET</i></p>
+    </div>
+    <nav class="ftr__nav" aria-label="Footer">
+      <a href="#/">Home</a>
+      <a href="#/advisory">Advisory</a>
+      <a href="#/investments">Investments</a>
+      <a href="#/tenants">Tenants</a>
+    </nav>
+    <div class="ftr__social">
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="ftr__mail" href="mailto:hello@mercado.partners">hello@mercado.partners</a>
+    </div>
+    <div class="ftr__legal">
+      <span>© 2022–2026 Mercado. All rights reserved.</span>
+      <span>Investment and advisory. Los Angeles and Miami.</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+/* tone-reactive chrome (the "color changer" applied to global furniture) */
+body[data-tone="stone"]{background:var(--stone)}
+body[data-tone="ink"]{background:var(--ink)}
+body[data-hdr="stone"] .hdr,body[data-hdr="stone"] .mark{color:var(--ink)}
+body[data-hdr="ink"] .hdr,body[data-hdr="ink"] .mark{color:var(--chalk)}
+body[data-tone="stone"] .edge{border-color:rgba(33,35,30,.20)}
+body[data-tone="ink"] .edge{border-color:rgba(239,238,233,.16)}
+.mark{transition:color .9s var(--ease),opacity .35s linear}
+.hdr::before{content:"";position:absolute;left:var(--frame);right:var(--frame);top:var(--frame);bottom:-2.6rem;z-index:-1;pointer-events:none;opacity:0;transition:opacity .55s var(--ease)}
+body[data-hdr="ink"] .hdr::before{background:linear-gradient(180deg,rgba(23,24,20,.94) 0%,rgba(23,24,20,.82) 52%,rgba(23,24,20,0) 100%)}
+body[data-hdr="stone"] .hdr::before{background:linear-gradient(180deg,rgba(227,225,218,.95) 0%,rgba(227,225,218,.84) 52%,rgba(227,225,218,0) 100%)}
+.hdr.stuck::before{opacity:1}
+.hdr::after{content:"";position:absolute;left:calc(var(--frame) + var(--pad));right:calc(var(--frame) + var(--pad));bottom:0;height:1px;background:currentColor;opacity:0;transition:opacity .5s var(--ease)}
+.hdr.stuck::after{opacity:.16}
+.tone-ink .step{border-color:rgba(239,238,233,.14)}
+.tone-ink .crit,.tone-ink .crit__row{border-color:rgba(239,238,233,.16)}
+</style>
+
+<script>
+(function(){
+"use strict";
+var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
+var reduced = RM.matches;
+try{ RM.addEventListener('change',function(e){reduced=e.matches;}); }catch(e){}
+
+/* ---------- routing ---------- */
+var ROUTES = ['/','/advisory','/investments','/tenants'];
+var PAGE = {'/':'page-home','/advisory':'page-advisory','/investments':'page-investments','/tenants':'page-tenants'};
+var mark = document.getElementById('mark');
+var slot = document.getElementById('slot');
+var current = null;
+
+function route(){
+  var h = location.hash.replace(/^#/,'') || '/';
+  if(ROUTES.indexOf(h) === -1) h = '/';
+  if(h === current) return;
+  current = h;
+  Object.keys(PAGE).forEach(function(k){
+    document.getElementById(PAGE[k]).classList.toggle('live', k === h);
+  });
+  document.querySelectorAll('[data-route]').forEach(function(a){
+    if(a.getAttribute('data-route') === h) a.setAttribute('aria-current','page');
+    else a.removeAttribute('aria-current');
+  });
+  var home = (h === '/');
+  mark.hidden = !home;
+  slot.classList.toggle('solo', !home);
+  document.title = home ? 'Mercado — Retail Real Estate Investment & Advisory'
+    : 'Mercado — ' + h.slice(1).charAt(0).toUpperCase() + h.slice(2);
+  window.scrollTo(0,0);
+  closeSheet();
+  collectTones();
+  initReveals();
+  measureMark();
+  onScroll();
+  var focusTarget = document.querySelector('.live h1');
+  if(focusTarget){ focusTarget.setAttribute('tabindex','-1'); }
+}
+window.addEventListener('hashchange', route);
+
+/* ---------- mobile sheet ---------- */
+var sheet = document.getElementById('sheet'), burger = document.getElementById('burger');
+function sheetLinks(){ return [].slice.call(sheet.querySelectorAll('a,button')); }
+function openSheet(){
+  sheet.classList.add('open');
+  sheet.setAttribute('aria-hidden','false');
+  burger.setAttribute('aria-expanded','true');
+  document.body.classList.add('locked');
+  setTimeout(function(){ sheet.focus(); }, 340);
+}
+function closeSheet(returnFocus){
+  var wasOpen = sheet.classList.contains('open');
+  sheet.classList.remove('open');
+  sheet.setAttribute('aria-hidden','true');
+  burger.setAttribute('aria-expanded','false');
+  document.body.classList.remove('locked');
+  if(wasOpen && returnFocus === true && burger) burger.focus();
+}
+burger.addEventListener('click', function(){ sheet.classList.contains('open') ? closeSheet(true) : openSheet(); });
+document.getElementById('sheetClose').addEventListener('click', function(){ closeSheet(true); });
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){ closeSheet(true); return; }
+  if(e.key !== 'Tab' || !sheet.classList.contains('open')) return;
+  var f = sheetLinks(); if(!f.length) return;
+  var first = f[0], last = f[f.length - 1];
+  if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+});
+
+var hdr = document.querySelector('.hdr');
+
+/* ---------- the wordmark that becomes the header identity ---------- */
+var geo = null;
+function measureMark(){
+  if(mark.hidden){ geo = null; return; }
+  mark.style.transform = 'none';
+  slot.classList.add('solo');
+  var m = mark.getBoundingClientRect();
+  var s = slot.querySelector('span').getBoundingClientRect();
+  slot.classList.remove('solo');
+  if(!m.width || !s.width){ geo = null; return; }
+  geo = { dx: s.left - m.left, dy: s.top - m.top, sc: s.width / m.width };
+}
+function easeInOut(t){ return t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+
+var elev = document.getElementById('elev');
+var heroFoot = document.querySelector('.hero__foot');
+var ticking = false;
+
+function onScroll(){
+  var y = window.pageYOffset;
+  hdr.classList.toggle('stuck', y > 24);
+  updateTones();
+
+  if(!mark.hidden && geo){
+    var span = Math.max(window.innerHeight * 0.62, 1);
+    var t = easeInOut(Math.min(Math.max(y / span, 0), 1));
+    mark.style.transform = 'translate3d(' + (geo.dx * t) + 'px,' + (geo.dy * t) + 'px,0) scale(' + (1 + (geo.sc - 1) * t) + ')';
+    var done = t > 0.985;
+    mark.style.opacity = done ? '0' : '1';
+    slot.classList.toggle('solo', done);
+    if(heroFoot) heroFoot.style.opacity = String(Math.max(0, 1 - t * 1.5));
+  }
+  if(elev && !reduced){
+    elev.style.transform = 'translate3d(0,' + (y * 0.1) + 'px,0)';
+  }
+  ticking = false;
+}
+window.addEventListener('scroll', function(){
+  if(!ticking){ ticking = true; window.requestAnimationFrame(onScroll); }
+}, {passive:true});
+window.addEventListener('resize', function(){ measureMark(); onScroll(); });
+
+/* ---------- tone changer ----------
+   Two readings of the same sequence: the header takes the tone of whatever
+   sits directly beneath it, the page furniture takes the tone at mid-view. */
+var toneEls = [];
+function collectTones(){
+  var live = document.querySelector('.page.live');
+  toneEls = live ? [].slice.call(live.querySelectorAll('[data-tone]')) : [];
+}
+function toneAt(y){
+  for(var i = toneEls.length - 1; i >= 0; i--){
+    var r = toneEls[i].getBoundingClientRect();
+    if(r.top <= y && r.bottom > y) return toneEls[i].getAttribute('data-tone');
+  }
+  return null;
+}
+function updateTones(){
+  var hdrY = hdr ? hdr.getBoundingClientRect().height * 0.5 : 34;
+  var a = toneAt(hdrY);
+  if(a && document.body.getAttribute('data-hdr') !== a) document.body.setAttribute('data-hdr', a);
+  var b = toneAt(window.innerHeight * 0.5);
+  if(b && document.body.getAttribute('data-tone') !== b) document.body.setAttribute('data-tone', b);
+}
+
+/* ---------- scroll reveal ---------- */
+var revObs = null;
+function initReveals(){
+  if(revObs) revObs.disconnect();
+  revObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); revObs.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+  var live = document.querySelector('.page.live');
+  if(!live) return;
+  live.querySelectorAll('.rv, .rv-line').forEach(function(n){
+    if(!n.classList.contains('in')) revObs.observe(n);
+  });
+}
+
+/* ---------- rotating headings ---------- */
+var rots = [].slice.call(document.querySelectorAll('.rot'));
+rots.forEach(function(r){
+  var words = JSON.parse(r.getAttribute('data-rot'));
+  r.innerHTML = '';
+  words.forEach(function(w,i){
+    var el = document.createElement('i');
+    el.textContent = w;
+    if(i === 0) el.className = 'on';
+    r.appendChild(el);
+  });
+});
+if(rots.length){
+  var idx = 0;
+  setInterval(function(){
+    rots.forEach(function(r){
+      var kids = r.children, n = kids.length;
+      kids[idx % n].className = 'out';
+      kids[(idx + 1) % n].className = 'on';
+      var prev = idx;
+      setTimeout(function(){ kids[prev % n].className = ''; }, 750);
+    });
+    idx++;
+  }, 2900);
+}
+
+/* ---------- advisory: sticky rail ---------- */
+var railItems = document.querySelectorAll('#rail li');
+if(railItems.length){
+  var stepObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        var i = en.target.getAttribute('data-step');
+        railItems.forEach(function(li){ li.classList.toggle('on', li.getAttribute('data-step') === i); });
+      }
+    });
+  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+  document.querySelectorAll('.step').forEach(function(s){ stepObs.observe(s); });
+}
+
+/* ---------- investments: criteria disclosure ---------- */
+document.querySelectorAll('.crit__head').forEach(function(btn){
+  var row = btn.closest('.crit__row');
+  var panel = row.querySelector('.crit__panel');
+  btn.addEventListener('click', function(){
+    var open = row.classList.contains('open');
+    document.querySelectorAll('.crit__row.open').forEach(function(r){
+      r.classList.remove('open');
+      r.querySelector('.crit__panel').style.height = '0px';
+      r.querySelector('.crit__head').setAttribute('aria-expanded','false');
+    });
+    if(!open){
+      row.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+      panel.style.height = panel.firstElementChild.getBoundingClientRect().height + 'px';
+    }
+  });
+});
+window.addEventListener('resize', function(){
+  var open = document.querySelector('.crit__row.open');
+  if(open){
+    var p = open.querySelector('.crit__panel');
+    p.style.height = p.firstElementChild.getBoundingClientRect().height + 'px';
+  }
+});
+
+/* ---------- cursor dot ---------- */
+if(window.matchMedia('(pointer:fine)').matches && !reduced){
+  var dot = document.querySelector('.dot'), dx = 0, dy = 0, tx = 0, ty = 0, raf = null;
+  document.addEventListener('mousemove', function(e){
+    tx = e.clientX; ty = e.clientY;
+    dot.classList.add('on');
+    if(!raf) raf = requestAnimationFrame(loop);
+  });
+  document.addEventListener('mouseleave', function(){ dot.classList.remove('on'); });
+  function loop(){
+    dx += (tx - dx) * .2; dy += (ty - dy) * .2;
+    dot.style.transform = 'translate3d(' + (dx - 3.5) + 'px,' + (dy - 3.5) + 'px,0)' + (dot.classList.contains('grow') ? ' scale(4.2)' : '');
+    raf = requestAnimationFrame(loop);
+  }
+  document.addEventListener('mouseover', function(e){
+    var hit = e.target.closest('a,button');
+    dot.classList.toggle('grow', !!hit);
+  });
+}
+
+/* ---------- live clocks ---------- */
+function tick(){
+  var opts = { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
+  try{
+    document.getElementById('clockLA').textContent =
+      new Intl.DateTimeFormat('en-GB', Object.assign({timeZone:'America/Los_Angeles'}, opts)).format(new Date());
+    document.getElementById('clockMIA').textContent =
+      new Intl.DateTimeFormat('en-GB', Object.assign({timeZone:'America/New_York'}, opts)).format(new Date());
+  }catch(e){}
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------- boot ---------- */
+route();
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ measureMark(); onScroll(); }); }
+window.addEventListener('load', function(){ measureMark(); onScroll(); });
+})();
+</script>
+</body>
+</html>
