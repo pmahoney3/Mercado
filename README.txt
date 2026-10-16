@@ -6,29 +6,27 @@ Two copies of the same site are included.
 1. mercado-single-file.html
    The entire site in one file: markup, CSS, JavaScript and every
    photograph embedded. No server, no asset folder, no build step.
-   Double-click to open it locally, or upload it anywhere.
 
 2. index.html + /assets
-   The unpacked version. Same site, but the photographs are separate
-   .webp files in /assets. Use this one for a real deployment or for
-   handing to a developer: images cache individually and the HTML
-   stays small (~110 KB).
+   The unpacked version. Use this one for deployment or developer
+   handoff: images cache individually and the HTML stays ~77 KB.
 
 DEPLOYING
    Upload index.html and the /assets folder together, keeping the
-   folder structure, to any static host (Netlify, Vercel, Cloudflare
-   Pages, S3, or ordinary shared hosting). No database or backend.
+   folder structure, to any static host. No database or backend.
 
-FONTS
-   Archivo and Newsreader load from Google Fonts. An internet
-   connection is required for correct typography; without one the
-   site falls back to system fonts and still works.
+CONTACT
+   All contact runs through mailto: links to pmahoney@mercado.partners.
+   There is no contact form and no backend form handler. If a form is
+   wanted later it needs a form service and configuration.
+
+SOCIAL
+   Instagram: https://www.instagram.com/mercado.partners/
+   LinkedIn:  https://www.linkedin.com/company/mercado-partner
+   The three Instagram links under Investments > Experience point to
+   third-party neighborhood accounts, not Mercado's.
 
 NOTES BEFORE LAUNCH
-   - Photography is placeholder/reference imagery and needs licensed
-     replacements. Several files are below the resolution their
-     containers want.
-   - The three Instagram handles under Investments > Experience point
-     at live accounts; confirm they are correct.
-   - Social links in the header and footer are placeholders.
+   - Photography is placeholder/reference imagery needing licensed
+     replacements; several files sit below their container resolution.
    - Copyright reads 2022-2026 and is hardcoded.
