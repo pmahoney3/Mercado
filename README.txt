@@ -1,30 +1,29 @@
 MERCADO — WEBSITE EXPORT
 ========================
 
-Two copies of the same site are included.
-
 1. mercado-single-file.html
-   The entire site in one file: markup, CSS, JavaScript and every
-   photograph embedded. No server, no asset folder, no build step.
+   Entire site in one file, every image and favicon embedded.
 
 2. index.html + /assets
-   The unpacked version. Use this one for deployment or developer
-   handoff: images cache individually and the HTML stays ~77 KB.
+   Unpacked version for deployment. Upload both, keeping the folder
+   structure, to any static host. No backend.
 
-DEPLOYING
-   Upload index.html and the /assets folder together, keeping the
-   folder structure, to any static host. No database or backend.
+FAVICON
+   assets/favicon-16.png, -32.png  solid M silhouette (small sizes)
+   assets/favicon-180.png          full construction drawing (home screen)
+   assets/favicon-512.png          large source, for a web app manifest
+   The small sizes use a simplified silhouette derived from the same
+   drawing, because the construction lines are illegible below ~64px.
 
 CONTACT
-   All contact runs through mailto: links to pmahoney@mercado.partners.
-   There is no contact form and no backend form handler. If a form is
-   wanted later it needs a form service and configuration.
+   All contact is mailto: to pmahoney@mercado.partners. No contact
+   form and no backend form handler exist.
 
 SOCIAL
    Instagram: https://www.instagram.com/mercado.partners/
    LinkedIn:  https://www.linkedin.com/company/mercado-partner
-   The three Instagram links under Investments > Experience point to
-   third-party neighborhood accounts, not Mercado's.
+   Instagram links under Investments > Experience are third-party
+   neighborhood accounts, not Mercado's.
 
 NOTES BEFORE LAUNCH
    - Photography is placeholder/reference imagery needing licensed
